@@ -327,7 +327,7 @@ if __name__ == '__main__':
 
     # 循环输入和生成
     while True:
-        brd_name = input('请输入词牌名：')
+        brd_name = input('')
         # poe = generate_song_by_brand_name(brd_name, poe_list, word_dict_li)
         # poe = generate_tang_by_structure([2, 2, 2, 1], 4, word_dict_li)
         poe = generate_tang_by_structure_hide_sentence([2, 3, 2], '我爱你', 0, word_dict_li)
