@@ -10,7 +10,7 @@ path_1 = 'output/freq1.txt'         # 单字词文件
 path_2 = 'output/freq2.txt'         # 双字词文件
 path_3 = 'output/freq3.txt'         # 三字词文件
 
-symbols = '[，。！？“”、（）；《》]'    # 词中的标点符号（用于过滤）
+symbols = '[，。！？“”、（）；《》：]'    # 词中的标点符号（用于分句）
 err = ['□', '■', '‘', '(', ')']     # 文件中的乱码（用于过滤）
 two_lim = 5                         # 双字词判断是词的阈值
 three_lim = 15                      # 三字词判断是否为词的阈值
@@ -134,6 +134,7 @@ def get_structure(poetry_list, brand_name, wd_dict_list):
                 pos = 0
                 # print(sentence)
                 while pos < len(sentence):
+                    # 向前搜索3、2、1个字，判断是不是词
                     # 列表切片索引可越界，返回结果不包含越界部分
                     if pos < len(sentence) and sentence[pos:pos+3] in wd_dict_list[2]:
                         sen_li.append(3)
@@ -149,6 +150,9 @@ def get_structure(poetry_list, brand_name, wd_dict_list):
                 poe_li.append(sen_li)
             structure.append(poe_li)
     # print(structure[random.randint(0, len(structure) - 1)])
+    # 如果未找到
+    if len(structure) == 0:
+        return None
     # 从所有可能的结构中随机选取一个
     return structure[random.randint(0, len(structure) - 1)]
 
@@ -165,40 +169,135 @@ def get_brand_name_list(poetry_list):
     return result
 
 
-# 生成一首词
-# brand_name：词牌名
-# poetry_list：诗词对象列表
+# 获取诗词词频迭代列表
 # wd_dict_list：三种词词频字典的列表
-# 返回值：生成的诗词按句子组成的列表
-def generate(brand_name, poetry_list, wd_dict_list):
-    result = []
-    line = ''
-    # 获得该词牌的结构
-    structure = get_structure(poetry_list, brand_name, wd_dict_list)
-    # print(structure)
+# 返回值：诗词词频迭代列表
+def get_freq_count(wd_dict_list):
     count = []
     for di in wd_dict_list:
         tmp = 0
         for wd in di:
             tmp += di[wd]
         count.append(tmp)
+    return count
 
+
+# 根据词的长度随机生成一个词
+# word_len：词的长度
+# count：诗词词频迭代列表
+# wd_dict_list：三种词词频字典的列表
+# 返回值：随机的一个词
+def get_random_word(word_len, count, wd_dict_list):
+    # 排除太长太短的情况
+    if word_len <= 0 or word_len > 3:
+        return None
+    # 随机生成一个数（不超过词典中所有词词频之和）
+    rand = random.randint(0, count[word_len - 1])
+    # 遍历所有词
+    for word in wd_dict_list[word_len - 1]:
+        # 直到该随机数小于等于0，就选取该词
+        if rand <= 0:
+            return word
+        # 在该随机数中减去该词的词频
+        rand -= wd_dict_list[word_len - 1][word]
+
+
+# 寻找符合藏字要求的词
+# target：目标字
+# word_pos：藏字位置
+# wd_dict：词频字典
+def search_word(target, word_pos, wd_dict):
+    result = []
+    for word in wd_dict:
+        # 如果找到了要藏的词
+        if word[word_pos] == target:
+            result.append(word)
+    if len(result) == 0:
+        return ''
+    # 结果随机返回一个
+    return result[random.randint(0, len(result) - 1)]
+
+
+# 根据词牌名随机生成一首宋词
+# brand_name：词牌名
+# poetry_list：诗词对象列表
+# wd_dict_list：三种词词频字典的列表
+# 返回值：生成的诗词按句子组成的列表
+def generate_song_by_brand_name(brand_name, poetry_list, wd_dict_list):
+    result = []
+    # 获得该词牌的结构
+    structure = get_structure(poetry_list, brand_name, wd_dict_list)
+    # 如果无该词牌名
+    if structure is None:
+        return []
+    # print(structure)
+    count = get_freq_count(wd_dict_list)
     # 遍历结构列表
     for sen in structure:
-        for word_len in sen:
-            # 随机生成每一行诗句
-            # 随机生成一个数（不超过词典中所有词词频之和）
-            rand = random.randint(0, count[word_len-1])
-            # 遍历所有词
-            for word in wd_dict_list[word_len-1]:
-                # 直到该随机数小于等于0，就选取该词
-                if rand <= 0:
-                    line += word
-                    break
-                # 在该随机数中减去该词的词频
-                rand -= wd_dict_list[word_len-1][word]
-        result.append(line)
         line = ''
+        # 随机生成每一行诗句
+        for word_len in sen:
+            line += get_random_word(word_len, count, wd_dict_list)
+        result.append(line)
+    return result
+
+
+# 随机生成一首唐诗
+# structure：单句的结构，如[2, 2, 2, 1]表示：一句7个字，按2、2、2、1进行分词
+# sen_count：诗句数量
+# wd_dict_list：三种词词频字典的列表
+# 返回值：生成的诗词按句子组成的列表
+def generate_tang_by_structure(structure, sen_count, wd_dict_list):
+    result = []
+    count = get_freq_count(wd_dict_list)
+    for i in range(sen_count):
+        line = ''
+        # 随机生成每一行诗句
+        for word_len in structure:
+            line += get_random_word(word_len, count, wd_dict_list)
+        result.append(line)
+    return result
+
+
+# 随机生成一首藏头、藏腹、藏尾诗
+# structure：单句的结构，如[2, 2, 2, 1]表示：一句7个字，按2、2、2、1进行分词
+# sentence：要藏的句子
+# position：藏的位置
+# wd_dict_list：三种词词频字典的列表
+# 返回值：生成的诗词按句子组成的列表
+def generate_tang_by_structure_hide_sentence(structure, sentence, position, wd_dict_list):
+    result = []
+    count = get_freq_count(wd_dict_list)
+    for i in range(len(sentence)):
+        line = ''
+        # 随机生成每一行诗句
+        pos = 0
+        for word_len in structure:
+            # 先根据是不是要藏的词进行处理
+            # 如果是要藏的词，此处如果等于，说明是下一个词的开头是要藏的位置
+            if pos <= position < pos + word_len:
+                word_pos = position - pos
+                # 寻找符合藏字要求的词
+                cur_word = search_word(sentence[i], word_pos, wd_dict_list[word_len - 1])
+                # 如果没找到要藏的字
+                if len(cur_word) == 0:
+                    # 生成要藏的字前面的词
+                    word = get_random_word(word_pos, count, wd_dict_list)
+                    if word is not None:
+                        cur_word += word
+                    # 加入要藏的字
+                    cur_word += sentence[i]
+                    # 生成要藏的字后面的词
+                    word = get_random_word(word_len - word_pos - 1, count, wd_dict_list)
+                    if word is not None:
+                        cur_word += word
+                line += cur_word
+                pos += word_len
+                # 该词已藏完，跳过后面的步骤
+                continue
+            line += get_random_word(word_len, count, wd_dict_list)
+            pos += word_len
+        result.append(line)
     return result
 
 
@@ -229,7 +328,9 @@ if __name__ == '__main__':
     # 循环输入和生成
     while True:
         brd_name = input('请输入词牌名：')
-        poe = generate(brd_name, poe_list, word_dict_li)
+        # poe = generate_song_by_brand_name(brd_name, poe_list, word_dict_li)
+        # poe = generate_tang_by_structure([2, 2, 2, 1], 4, word_dict_li)
+        poe = generate_tang_by_structure_hide_sentence([2, 3, 2], '我爱你', 0, word_dict_li)
         print('生成：')
         print(poe)
         print('----------------------------------')
