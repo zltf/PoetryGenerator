@@ -5,10 +5,10 @@ import time
 random.seed(time.time())    # 设置随机数种子
 
 
-poetry_path = 'Ci.txt'  # 语料库路径
-path_1 = 'freq1.txt'    # 单字词文件
-path_2 = 'freq2.txt'    # 双字词文件
-path_3 = 'freq3.txt'    # 三字词文件
+poetry_path = 'resource/Ci.txt'     # 语料库路径
+path_1 = 'output/freq1.txt'         # 单字词文件
+path_2 = 'output/freq2.txt'         # 双字词文件
+path_3 = 'output/freq3.txt'         # 三字词文件
 
 symbols = '[，。！？“”、（）；《》]'    # 词中的标点符号（用于过滤）
 err = ['□', '■', '‘', '(', ')']     # 文件中的乱码（用于过滤）
