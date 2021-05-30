@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>藏头诗在线生成</title>
+
+    <style>
+      .img1{
+        position:fixed;
+        top:50vh;
+        right:5vw;
+        width: 20vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">藏头诗在线生成</h1>
+      <form>
+        <div class="mb-3">
+          <label for="input1" class="form-label">要藏的句子</label>
+          <input type="text" class="form-control" id="input1" name="sentence">
+        </div>
+        <div class="mb-3">
+          <label for="input2" class="form-label">藏的位置（输入数字，1代表头，2代表第2个字...）</label>
+          <input type="number" class="form-control" id="input2" name="position">
+        </div>
+        <div class="mb-3">
+          <label for="input3" class="form-label">类型</label>
+          <select class="form-control" id="input3" name="line_len">
+            <option selected value="5">五言</option>
+            <option value="7">七言</option>
+          </select>
+        </div>
+        <div class="text-center">
+          <button type="button" class="btn btn-primary" onclick="gen_poetry($('#input1').val(), $('#input2').val()-1, $('#input3').val())">生成</button>
+        </div>
+      </form>
+
+      <ul class="list-group text-center" style="margin: 20px auto;">
+      
+      </ul>
+
+      <a href="https://github.com/zltf/PoetryGenerator">开源地址：https://github.com/zltf/PoetryGenerator</a>
+
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/poetry.js"></script>
+  </body>
+</html>
