@@ -1,3 +1,5 @@
+-*- coding: utf-8 -*-
+
 from flask import Flask, request, json
 from flask_cors import *
 import poetry
