@@ -1,4 +1,4 @@
--*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from flask import Flask, request, json
 from flask_cors import *
@@ -46,4 +46,4 @@ def generate_tang_by_structure_hide_sentence():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
